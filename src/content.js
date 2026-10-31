@@ -379,33 +379,33 @@ export const exercises = [
 ];
 export const plan = [
   {
-    date: "Oct 22–24",
+    date: "Oct 30",
     title: "Build the foundations",
-    desc: "Trace Dijkstra, count queue operations, and write its invariant from memory.",
+    desc: "Review order-notation definitions, then rebuild Dijkstra’s invariant and count queue operations.",
     topic: "dijkstra",
   },
   {
-    date: "Oct 25–27",
+    date: "Oct 31",
     title: "Practice translating problems",
-    desc: "Define reduction maps, prove both directions, and count the new graph’s size.",
+    desc: "Practice state expansion, both solution maps, preserved costs, and transformed-size accounting.",
     topic: "reductions",
   },
   {
-    date: "Oct 28–30",
+    date: "Nov 1–2",
     title: "Make greedy proofs precise",
-    desc: "Write an exchange argument, then revisit cuts, cycles, and union-find.",
+    desc: "Derive an exchange inequality, repair a stays-ahead proof, find a lower bound, then review MST cuts.",
     topic: "greedy",
   },
   {
-    date: "Oct 31–Nov 2",
+    date: "Nov 3–4",
     title: "Account for every operation",
-    desc: "Practice potential functions, telescoping sums, and sequence bounds.",
+    desc: "Derive a potential, explain tokens and gifts, then study approximation through lower bounds.",
     topic: "amortized",
   },
   {
-    date: "Nov 3–5",
+    date: "Nov 5",
     title: "Rehearse free response",
-    desc: "Do timed original problems. Review omissions with the self-assessment rubric.",
+    desc: "Attempt the supplied practice midterm on paper. Bring your reasoning to chat and revisit the missed lemmas.",
     topic: "practice",
   },
   {

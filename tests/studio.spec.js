@@ -115,38 +115,53 @@ test("Kruskal and amortized labs support predictions, cost spikes, and repeat Fi
     page.getByText("Find(H): 1 parent edges traversed"),
   ).toBeVisible();
 });
-test("Practice persists separate answers, timer, rubric, and exports a readable file", async ({
-  page,
-}) => {
+test("Paper-first practice hides solutions, exports prompts, and preserves old drafts", async ({ page, context }) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
   await page.goto("/#practice");
-  const boxes = page.getByRole("textbox");
-  await boxes.nth(0).fill("My algorithm draft");
-  await boxes.nth(1).fill("My inductive correctness argument");
-  await boxes.nth(2).fill("O((n + m) log n)");
-  await page.getByRole("button", { name: "Start timer" }).click();
-  await expect(page.getByLabel("Time remaining")).not.toHaveText("20:00", {
-    timeout: 3000,
-  });
-  await page.getByRole("button", { name: "Pause timer" }).click();
+  await page.evaluate(() => localStorage.setItem("as-draft-p1", JSON.stringify({algorithm:"Previous saved reasoning", proof:"", runtime:""})));
   await page.reload();
-  await expect(boxes.nth(1)).toHaveValue("My inductive correctness argument");
-  await page.getByRole("button", { name: "Review my answer" }).click();
-  await expect(
-    page.getByText("SELF-ASSESSMENT · NOT AUTOMATED GRADING"),
-  ).toBeVisible();
-  await page.getByRole("checkbox").first().check();
-  await page.getByRole("button", { name: "Reveal reference outline" }).click();
-  await expect(page.locator(".reference-outline")).toContainText(
-    "Counterexample",
-  );
+  await expect(page.locator("textarea")).toHaveCount(0);
+  await page.getByRole("button", {name:"Copy prompt for chat"}).click();
+  await expect(page.getByRole("status")).toContainText("Prompt copied");
+  expect(await page.evaluate(()=>navigator.clipboard.readText())).toContain("Algorithm Studio exercise p1");
+  await expect(page.locator(".reference-outline")).not.toBeVisible();
+  await page.getByText("Show a small hint", {exact:true}).click();
+  await expect(page.getByText("Separate discovery", {exact:false})).toBeVisible();
+  await page.getByText("Your previously saved draft", {exact:true}).click();
+  await expect(page.getByText("Previous saved reasoning", {exact:true})).toBeVisible();
+  await page.getByText("Reveal reference outline after attempting", {exact:true}).click();
+  await expect(page.locator(".reference-outline")).toContainText("Counterexample");
   const dl = page.waitForEvent("download");
-  await page.getByRole("button", { name: "Export", exact: true }).click();
+  await page.getByRole("button", {name:"Download prompt",exact:true}).click();
   expect((await dl).suggestedFilename()).toBe("algorithm-studio-p1.txt");
-  await page.getByRole("button", { name: /Routes that stay/ }).click();
-  await expect(boxes.nth(0)).toHaveValue("");
-  await boxes.nth(0).fill("A different solution");
-  await page.getByRole("button", { name: /A shortest-path proof/ }).click();
-  await expect(boxes.nth(0)).toHaveValue("My algorithm draft");
+  await page.getByRole("combobox").selectOption("approximation");
+  await expect(page.getByRole("heading", {name:"Find the critical job",exact:true})).toBeVisible();
+  await expect(page.locator(".reference-outline")).not.toBeVisible();
+});
+test("Exam notes develop arguments and interactive comparisons update correctly", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/#exam/greedy");
+  await page.screenshot({path:"/tmp/algorithm-exam-desktop.png"});
+  await expect(page.getByRole("heading",{name:"Develop a greedy proof",exact:true})).toBeVisible();
+  await page.getByRole("button",{name:"Reveal cost comparison"}).click();
+  await expect(page.getByRole("status")).toContainText("B first is better");
+  await page.getByLabel("Weight of A").fill("8");
+  await expect(page.getByRole("status")).toHaveCount(0);
+  await page.getByRole("button",{name:"Reveal cost comparison"}).click();
+  await expect(page.getByRole("status")).toContainText("A first is better");
+  await page.getByLabel("Weight of A").fill("2");
+  await page.getByRole("button",{name:"Reveal cost comparison"}).click();
+  await expect(page.getByRole("status")).toContainText("Both orders tie");
+  const check=page.locator(".recall-check").first();
+  await expect(check.getByText("It chooses",{exact:false})).not.toBeVisible();
+  await check.getByText("Reveal explanation",{exact:true}).click();
+  await expect(check.getByText("It chooses",{exact:false})).toBeVisible();
+  await page.goto("/#exam/approximation");
+  for(let i=0;i<5;i++) await page.getByRole("button",{name:"Assign next job"}).click();
+  await expect(page.getByRole("status")).toContainText("Greedy makespan = 7");
+  await expect(page.getByRole("button",{name:"Assign next job"})).toBeDisabled();
+  await page.getByRole("button",{name:"Reset jobs"}).click();
+  await expect(page.getByRole("status")).toHaveCount(0);
 });
 test("All lecture files are valid PDFs, search filters, and plan progress persists", async ({
   page,
@@ -156,7 +171,7 @@ test("All lecture files are valid PDFs, search filters, and plan progress persis
   const links = await page
     .getByRole("link", { name: "Open PDF" })
     .evaluateAll((els) => els.map((a) => a.getAttribute("href")));
-  expect(links).toHaveLength(5);
+  expect(links).toHaveLength(7);
   for (const link of links) {
     const r = await request.get(link.split("#")[0]);
     expect(r.status()).toBe(200);
@@ -191,6 +206,14 @@ test("Every page works at mobile width without horizontal overflow or console er
   page.on("pageerror", (e) => errors.push(e.message));
   for (const route of [
     "overview",
+    "exam/start",
+    "exam/greedy",
+    "exam/reductions",
+    "exam/dijkstra",
+    "exam/order",
+    "exam/mst",
+    "exam/amortized",
+    "exam/approximation",
     "learn/dijkstra",
     "learn/reductions",
     "learn/greedy",
@@ -203,6 +226,7 @@ test("Every page works at mobile width without horizontal overflow or console er
   ]) {
     await page.goto("/#" + route);
     await expect(page.locator("h1")).toBeVisible();
+    if(route === "exam/greedy") await page.screenshot({path:"/tmp/algorithm-exam-mobile.png"});
     expect(
       await page.evaluate(() => document.documentElement.scrollWidth),
     ).toBeLessThanOrEqual(390);

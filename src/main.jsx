@@ -33,7 +33,15 @@ import {
   Search,
   Bookmark,
 } from "lucide-react";
-import { modules, exercises, plan } from "./content";
+import { modules, exercises as originalExercises, plan } from "./content";
+import { examExercises } from "./examExercises";
+import { ExamPrep, PracticeCard } from "./ExamPrep";
+const exercises = [...originalExercises, ...examExercises];
+const extraLectures = [
+  {id:"tight", title:"Tight amortized analysis", tag:"tokens gifts union-find inverse Ackermann", file:"Week4tightamortizedtime.pdf", week:"Week 4", pages:"19–56", page:19, exam:"amortized"},
+  {id:"approx", title:"Approximation algorithms", tag:"bounds TSP load balancing", file:"Week4approx.pdf", week:"Week 4", pages:"5–44", page:5, exam:"approximation"},
+];
+const libraryLectures = [...modules, ...extraLectures];
 import { DijkstraLab, Lab } from "./Labs";
 import { daysUntilExam } from "./algorithms";
 import "./styles.css";
@@ -96,13 +104,14 @@ function App() {
   const days = daysUntilExam();
   const nav = [
     ["overview", LayoutDashboard, "Study overview"],
+    ["exam/start", BookOpen, "Exam prep notes"],
     ["learn/dijkstra", Network, "Interactive lessons"],
     ["proofs", PenLine, "Proof toolkit"],
     ["practice", GraduationCap, "Practice room"],
     ["plan", CalendarDays, "Study plan"],
     ["library", Library, "Lecture library"],
   ];
-  let title = route.startsWith("learn/")
+  let title = route.startsWith("exam/") ? "Exam prep notes" : route.startsWith("learn/")
     ? "Interactive lessons"
     : nav.find((n) => n[0] === route)?.[2] || "Study overview";
   return (
@@ -139,7 +148,8 @@ function App() {
               href={"#" + id}
               className={
                 route === id ||
-                (id === "learn/dijkstra" && route.startsWith("learn/"))
+                (id === "learn/dijkstra" && route.startsWith("learn/")) ||
+                (id === "exam/start" && route.startsWith("exam/"))
                   ? "nav-link active"
                   : "nav-link"
               }
@@ -150,7 +160,7 @@ function App() {
             >
               <Icon size={19} />
               {label}
-              {id === "practice" && <span className="nav-count">5</span>}
+              {id === "practice" && <span className="nav-count">{exercises.length}</span>}
             </a>
           ))}
         </nav>
@@ -190,7 +200,7 @@ function App() {
           {storageError && (
             <div className="storage-warning" role="alert">
               Browser storage is unavailable. Your work will last for this
-              session only; export written answers before leaving.
+              session only; save any progress you want to keep elsewhere.
             </div>
           )}
           {route === "overview" ? (
@@ -209,6 +219,8 @@ function App() {
               progress={progress[activeModule.id] || {}}
               mark={mark}
             />
+          ) : route.startsWith("exam/") ? (
+            <ExamPrep id={route.split("/")[1]} go={go} />
           ) : route === "proofs" ? (
             <ProofToolkit />
           ) : route === "practice" ? (
@@ -278,6 +290,7 @@ function Overview({ go, progress, pct, count, days }) {
           </span>
         </div>
       </PageIntro>
+      <section className="callout exam-welcome"><span className="eyebrow">NEW · PROFESSOR-ALIGNED EXAM PREP</span><h2>Learn how to build the argument.</h2><p>Detailed notes, worked lemmas, and practice drawn from the skills in your professor’s keys and practice midterm. Start with greedy proofs or graph reductions, then cover the two new lecture decks.</p><div className="button-row"><button className="button" onClick={()=>go("exam/start")}>Open exam prep notes</button><button className="button secondary" onClick={()=>go("exam/greedy")}>Develop a greedy proof</button></div></section>
       <div className="overview-stats">
         <div>
           <span className="stat-icon">
@@ -418,8 +431,7 @@ function Overview({ go, progress, pct, count, days }) {
           <span className="eyebrow">FROM “I GET IT” TO “I CAN PROVE IT”</span>
           <h3>Practice the way you’ll be asked to think.</h3>
           <p>
-            Original free-response problems, guided hints, and a rubric for your
-            reasoning.
+            Free-response exercises, guided hints, and self-review checklists. Work on paper and discuss your reasoning in chat.
           </p>
         </div>
         <button className="button secondary" onClick={() => go("practice")}>
@@ -427,8 +439,7 @@ function Overview({ go, progress, pct, count, days }) {
         </button>
       </section>
       <div className="source-note">
-        <Bookmark size={14} /> Grounded in your five lecture decks. Homework
-        informs the format; its problems are left unsolved.
+        <Bookmark size={14} /> Grounded in seven lecture decks, the professor’s solution keys, and the practice midterm.
       </div>
     </>
   );
@@ -463,6 +474,7 @@ function Lesson({ module: m, go, progress, mark }) {
           <BookOpen size={16} /> Lecture source <ExternalLink size={13} />
         </a>
       </PageIntro>
+      <div className="callout lesson-notes-link"><strong>Need to write a solution, not just trace the algorithm?</strong><p>Study the detailed explanation, worked lemmas, and exam mistakes for this topic.</p><button className="button secondary" onClick={()=>go("exam/"+m.id)}>Read detailed exam notes</button></div>
       <div className="tabs" role="tablist" aria-label="Lesson sections">
         {[
           ["Explore", Network, "lab"],
@@ -863,6 +875,7 @@ function ProofToolkit() {
         }
         desc="When the page is blank, start with the proof obligation—not the pseudocode."
       />
+      <div className="callout lesson-notes-link"><strong>Go beyond the template.</strong><p>The exam notes show how to discover the key inequality, choose a proof method, and complete the residual argument.</p><a className="button secondary" href="#exam/greedy">Study worked proof development</a></div>
       <div className="three-essentials">
         {[
           [
@@ -965,14 +978,13 @@ function Practice() {
             Turn understanding <em>into an answer.</em>
           </>
         }
-        desc="Original free-response prompts. Three parts, just like the format you described."
+        desc="Original and adapted free-response exercises. Work on paper, then discuss your reasoning in chat."
       />
       <div className="practice-notice">
         <Lightbulb size={17} />
         <span>
-          Preparation based on the reported format; the professor’s actual exam
-          format is unconfirmed. These are new study exercises, not homework
-          solutions.
+          Practice targets the skills in the supplied practice midterm and keys.
+          These are original exercises or adapted lecture/key examples, not a solution dump for the practice midterm. Suggested times are study targets, not official exam limits.
         </span>
       </div>
       <div className="practice-layout">
@@ -991,7 +1003,7 @@ function Practice() {
               }}
             >
               <option value="all">All topics</option>
-              {modules.map((m) => (
+              {[...modules, {id:"order", short:"Order notation"}, {id:"approximation",short:"Approximation"}].map((m) => (
                 <option key={m.id} value={m.id}>
                   {m.short}
                 </option>
@@ -1017,175 +1029,9 @@ function Practice() {
             </button>
           ))}
         </aside>
-        <PracticeEditor key={e.id} exercise={e} />
+        <PracticeCard key={e.id} exercise={e} />
       </div>
     </>
-  );
-}
-function PracticeEditor({ exercise: e }) {
-  const [draft, setDraft] = useStored("as-draft-" + e.id, {
-      algorithm: "",
-      proof: "",
-      runtime: "",
-    }),
-    [checks, setChecks] = useStored("as-rubric-" + e.id, {}),
-    [hint, setHint] = useState(false),
-    [review, setReview] = useState(false),
-    [outline, setOutline] = useState(false),
-    [running, setRunning] = useState(false),
-    [remaining, setRemaining] = useState(e.minutes * 60);
-  useEffect(() => {
-    if (!running) return;
-    const deadline = Date.now() + remaining * 1000;
-    const timer = setInterval(() => {
-      const value = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
-      setRemaining(value);
-      if (!value) setRunning(false);
-    }, 250);
-    return () => clearInterval(timer);
-  }, [running]);
-  const exportAnswer = () => {
-    const text = `${e.title}\n\n${e.prompt}\n\n${Object.entries(draft)
-      .map(([k, v]) => k.toUpperCase() + "\n" + v)
-      .join("\n\n")}`;
-    const url = URL.createObjectURL(new Blob([text], { type: "text/plain" }));
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `algorithm-studio-${e.id}.txt`;
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-  };
-  return (
-    <section className="card practice-editor">
-      <div className="editor-header">
-        <span className="eyebrow">
-          ORIGINAL EXERCISE · {e.level.toUpperCase()}
-        </span>
-        <div className="timer">
-          <Clock size={15} />
-          <span aria-label="Time remaining">
-            {Math.floor(remaining / 60)}:
-            {String(remaining % 60).padStart(2, "0")}
-          </span>
-          <button
-            className="icon-button"
-            aria-label={running ? "Pause timer" : "Start timer"}
-            disabled={!remaining}
-            onClick={() => setRunning(!running)}
-          >
-            {running ? <Pause size={14} /> : <Play size={14} />}
-          </button>
-          <button
-            className="icon-button"
-            aria-label="Reset timer"
-            onClick={() => {
-              setRunning(false);
-              setRemaining(e.minutes * 60);
-            }}
-          >
-            <RotateCcw size={14} />
-          </button>
-        </div>
-      </div>
-      <h2>{e.title}</h2>
-      <p className="exercise-prompt">{e.prompt}</p>
-      {remaining === 0 && (
-        <div role="status" className="callout">
-          Time is up. Your draft is saved; you can keep writing or start your
-          review.
-        </div>
-      )}
-      <button className="text-button" onClick={() => setHint(!hint)}>
-        <Lightbulb size={16} />
-        {hint ? "Hide hint" : "I’d like a small hint"}
-        <ChevronDown size={14} />
-      </button>
-      {hint && <div className="hint-box">{e.hint}</div>}
-      <div className="answer-fields">
-        {[
-          [
-            "algorithm",
-            "01",
-            "Algorithm",
-            "Specify your input, assumptions, data structures, and steps…",
-          ],
-          [
-            "proof",
-            "02",
-            "Correctness proof",
-            "State a claim and justify it. Include the base case and inductive step, or both directions…",
-          ],
-          [
-            "runtime",
-            "03",
-            "Time complexity",
-            "Define your parameters, count the work, and justify the final bound…",
-          ],
-        ].map(([key, num, title, placeholder]) => (
-          <label key={key}>
-            <span>
-              <i>{num}</i>
-              {title}
-              <small>{draft[key].length} characters</small>
-            </span>
-            <textarea
-              value={draft[key]}
-              placeholder={placeholder}
-              onChange={(ev) => setDraft({ ...draft, [key]: ev.target.value })}
-            />
-          </label>
-        ))}
-      </div>
-      <div className="editor-actions">
-        <span>
-          <Check size={14} /> Saved on this device
-        </span>
-        <button className="button secondary small" onClick={exportAnswer}>
-          <Download size={15} /> Export
-        </button>
-        <button className="button small" onClick={() => setReview(!review)}>
-          {review ? "Hide review" : "Review my answer"} <ArrowRight size={16} />
-        </button>
-      </div>
-      {review && (
-        <div className="review-panel">
-          <span className="eyebrow">
-            SELF-ASSESSMENT · NOT AUTOMATED GRADING
-          </span>
-          <h3>Check the reasoning, not just the result.</h3>
-          <p>
-            Compare your answer against each obligation. Checking a box records
-            your own assessment; it does not certify correctness.
-          </p>
-          {e.rubric.map((r, i) => (
-            <label className="check-row" key={r}>
-              <input
-                type="checkbox"
-                checked={!!checks[i]}
-                onChange={(ev) =>
-                  setChecks({ ...checks, [i]: ev.target.checked })
-                }
-              />
-              <span>{r}</span>
-            </label>
-          ))}
-          <button className="text-button" onClick={() => setOutline(!outline)}>
-            {outline ? "Hide" : "Reveal"} reference outline{" "}
-            <ChevronDown size={15} />
-          </button>
-          {outline && (
-            <div className="reference-outline">
-              {e.outline.map((o, i) => (
-                <div key={o}>
-                  <h4>{["Algorithm", "Correctness", "Complexity"][i]}</h4>
-                  <p>{o}</p>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-    </section>
   );
 }
 function StudyPlan({ go, days }) {
@@ -1230,7 +1076,7 @@ function StudyPlan({ go, days }) {
                     go(
                       ["practice", "proofs"].includes(p.topic)
                         ? p.topic
-                        : "learn/" + p.topic,
+                        : "exam/" + p.topic,
                     )
                   }
                 >
@@ -1249,7 +1095,7 @@ function StudyPlan({ go, days }) {
                 <b>5 min</b> · Recall yesterday’s idea without notes.
               </li>
               <li>
-                <b>15 min</b> · Predict and trace an algorithm.
+                <b>15 min</b> · Study one worked lemma and explain its key inequality.
               </li>
               <li>
                 <b>20 min</b> · Write a complete free response.
@@ -1294,14 +1140,14 @@ function LibraryPage({ go }) {
         />
       </label>
       <div className="library-grid">
-        {modules
+        {libraryLectures
           .filter((m) =>
             `${m.title} ${m.tag} ${m.file}`
               .toLowerCase()
               .includes(search.toLowerCase()),
           )
           .map((m) => {
-            const Icon = topicIcons[m.id];
+            const Icon = topicIcons[m.id] || BookOpen;
             return (
               <article className="card library-card" key={m.id}>
                 <span className={"module-icon " + m.id}>
@@ -1324,7 +1170,7 @@ function LibraryPage({ go }) {
                   </a>
                   <button
                     className="text-button"
-                    onClick={() => go("learn/" + m.id)}
+                    onClick={() => go(m.exam ? "exam/"+m.exam : "learn/"+m.id)}
                   >
                     Study interactively <ArrowRight size={15} />
                   </button>
@@ -1333,7 +1179,7 @@ function LibraryPage({ go }) {
             );
           })}
       </div>
-      {!modules.some((m) =>
+      {!libraryLectures.some((m) =>
         `${m.title} ${m.tag} ${m.file}`
           .toLowerCase()
           .includes(search.toLowerCase()),
@@ -1345,10 +1191,7 @@ function LibraryPage({ go }) {
       <div className="callout section-space">
         <h3>A note on the homework</h3>
         <p>
-          Homework 1, 2, and 3 were used only to understand the expected problem
-          style and the emphasis on algorithms, correctness, and time analysis.
-          Their problems and solutions are not included here. Practice exercises
-          are original or based on lecture examples.
+          Homework statements, professor-provided keys, the practice midterm, and your HW3 submission inform the detailed notes. Worked examples identify their sources. Your submission and the answer-key PDFs are not published here. The practice midterm is used to map skills, with its solutions left for you to attempt.
         </p>
       </div>
     </>

@@ -22,12 +22,21 @@ The MST PDF is stored as `Week3-4-MST.pdf` to avoid encoded-plus URL handling di
 - The union-find tree has eight vertices and can arise from union by rank. Compression changes parent pointers but not ranks or represented sets. The cost counter reports parent edges traversed, excluding constant overhead. It illustrates the mechanism rather than claiming to prove the inverse-Ackermann bound by example. The lecture's token/gift progression is summarized with a source link.
 - Arrays versus heaps shows symbolic operation-count expressions with unit coefficients, not measured execution time.
 
-## Homework boundary
+## Exam preparation expansion
 
-Homework 1, 2, and 3 were used only as references for topic mix and expected answer structure. They are not included as site assets. None of their questions is answered. Five practice exercises address a discovery/finalization misconception, safe-vertex reachability, the lecture's scheduling proof, tied MST weights, and an independent stack potential argument.
+Eight chapters in `src/examContent.js` map each topic to PDF pages or named key problems. The new lecture PDFs are included unchanged: `Week4tightamortizedtime.pdf` (57 pages) and `Week4approx.pdf` (45 pages). The five original labs and their 15 checkpoints remain separate from reading progress.
 
-Reference outlines are available only in the practice self-review section. Written answers are not automatically assessed. The timer lengths are suggested practice durations, not claims about the exam.
+- **Greedy:** rule discovery, counterexamples, weighted adjacent swaps, safe-discard and pairing cases, residual induction, stays-ahead availability, room overlap lower bounds.
+- **Reductions:** sufficient state, both solution maps, preserved cost, coupon/toll examples, event-chain construction, expanded-size accounting and recovery.
+- **Foundations:** quantified order notation, hypotheses of counterexamples, BFS/Dijkstra/DAG assumptions, array/binary/b-ary heap costs, reverse graphs.
+- **MST:** cut exchange, why the removed edge is not already accepted, Prim versus Dijkstra, rank invariants and Merge/Union conventions.
+- **Amortized:** deriving potential coefficients, initial-state accounting, self/gift token arguments, and the mechanism of the inverse-Ackermann refinement. The full technical tight proof is referred to its slides rather than claimed to be reproduced.
+- **Approximation:** metric TSP, two-machine critical-job bounds, prefix enumeration, parallel-job work bounds and the lecture's 11/4 refinement. The 7/6 tight LPT ratio is identified as stated in the slides, not proved by the 5/4 argument.
 
-## Intentional limits
+Source precision: `ans1F26.pdf` is labeled a graded-problem answer key. `ans2ugF26.pdf`'s edge-state construction needs the endpoint-compatibility condition omitted from its compact formula. Weighted waiting/completion costs differ by a constant under the stated job assumptions. TSP uses non-strict inequalities and distinguishes a metric visiting tour from an arbitrary original-edge Hamiltonian cycle.
 
-The site has five focused modules, not exhaustive coverage of the full course. Prim, graph search foundations, order notation, and the union-find token/gift analyses receive explanatory coverage; Prim, b-ary heaps, event-time flight reductions, and full inverse-Ackermann proofs do not have dedicated interactive labs. The original PDFs remain available for deeper study.
+## Practice and privacy
+
+The original five exercises plus twelve new/adapted exercises provide 17 prompts. Hint, self-review, and reference outline are independently hidden. Copy/download creates a prompt for discussion in chat; there are no AI API calls or answer-entry fields. Old localStorage drafts are not erased and can be read under the corresponding prompt. Suggested times are not official exam times.
+
+The supplied practice midterm informs a points/skills map without supplying its full solutions. Professor keys are used for source-identified worked examples. The student's HW3 submission is context, not an authority; it and the answer-key/midterm PDFs are not public assets. Graded homework solutions are not added to the site as a solution collection.

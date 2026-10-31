@@ -1,6 +1,6 @@
 # Algorithm Studio
 
-An interactive study website for CSE 202, based on the five supplied lecture decks. It emphasizes algorithm design, proof of correctness, and complexity analysis in preparation for the November 7, 2026 midterm.
+An interactive study website for CSE 202, based on the seven supplied lecture decks. It emphasizes algorithm design, proof of correctness, and complexity analysis in preparation for the November 7, 2026 midterm.
 
 ## Run locally
 
@@ -29,14 +29,15 @@ The development server binds to all interfaces. Use the hosting platform's suppo
 - **MST:** predict Kruskal accept/reject decisions and inspect the resulting forest, cycles, components, and weight.
 - **Amortized analysis:** experiment with the lecture cash register potential, then run repeated finds on a union-by-rank tree with path compression.
 - Reorder proof steps, study runtime breakdowns, compare dense/sparse priority queue costs, and check conceptual understanding.
-- Five original free-response exercises with separate algorithm/proof/runtime fields, optional timers, hints, self-assessment rubrics, and reference outlines.
+- Eight detailed exam-prep chapters: answer structure, greedy, reductions, shortest paths, order notation, MST, amortized analysis, and approximation. Worked lemmas, recall reveals, weighted-job swap exploration, and load-balancing traces.
+- Seventeen free-response exercises with hidden hints, checklists, and reference outlines. Copy/download prompts for discussion in chat; no website answer fields or AI calls.
 - Lecture library with source PDF page links, printable proof toolkit, and a suggested study plan.
 
-Progress, answers, and self-assessments persist in browser localStorage on the same origin/device. Timer state resets when leaving a problem. Written answers can be exported as text. No automatic proof grading or cross-device sync is provided. Study progress records lab activity, proof ordering, and concept questions; it is not a mastery score.
+Progress persists in browser localStorage on the same origin/device. Existing drafts from the earlier practice editor are preserved and available under their corresponding exercises. No automatic proof grading, token usage, or cross-device sync is provided. Study progress records lab activity, proof ordering, and concept questions; it is not a mastery score.
 
 ## Academic content and sources
 
-See [docs/content-guide.md](docs/content-guide.md) for the source mapping and scope. The homework PDFs were read only to understand style; no homework problems or solutions are included. Practice questions are original or revisit lecture examples. The reported free-response exam format is explicitly labeled unconfirmed.
+See [docs/content-guide.md](docs/content-guide.md) for the source mapping and scope. Professor-provided answer keys inform worked arguments and answer structure. Exercises are original or explicitly adapted from lecture/key examples. The practice midterm informs the skill map; its solutions are not revealed. The student submission and key PDFs are not published. Actual exam coverage remains unconfirmed.
 
 ## Validation
 
@@ -53,9 +54,12 @@ Browser tests use system Chromium at `/usr/bin/chromium`, available in this clou
 - `src/algorithms.js`: pure simulation logic and date calculation
 - `src/content.js`: lecture adaptations, proof blocks, original exercises, and study plan
 - `src/Labs.jsx`: interactive SVG and stateful lab components
-- `src/main.jsx`: navigation, lesson views, practice editor, and persistence
+- `src/main.jsx`: navigation, lesson views, and persistence
+- `src/ExamPrep.jsx`: detailed notes, local interactive examples, paper-first practice
+- `src/examContent.js`: source-mapped exam preparation chapters
+- `src/examExercises.js`: additional free-response exercises
 - `src/styles.css`: responsive styles and print layout
-- `public/lectures/`: five supplied lecture PDFs (MST filename normalized for URL compatibility)
+- `public/lectures/`: seven supplied lecture PDFs (MST filename normalized for URL compatibility)
 - `tests/`: algorithm and browser regression coverage
 
 Future cloud tasks should use the existing checkout; each task already runs in an isolated environment. Do not create a Git worktree unless explicitly requested. Install dependencies separately from starting the server: live processes do not survive environment publication/restoration.
