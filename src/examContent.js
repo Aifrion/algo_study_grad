@@ -293,10 +293,10 @@ export const chapters = [
         ],
         "steps": [
           "Base: s has distance 0, which is optimal with nonnegative weights.",
-          "Let u be the next extracted vertex with finite minimum tentative distance. On a shortest s–u path, let y be the first vertex not yet finalized and x its preceding finalized vertex.",
-          "Relaxing x→y gives d[y] ≤ δ(s,y). A prefix of a shortest path can be chosen shortest; combined with the discovered-path upper bound, d[y]=δ(s,y).",
-          "Nonnegativity of the remaining suffix gives δ(s,y) ≤ δ(s,u). Minimum extraction gives d[u] ≤ d[y]. Hence δ(s,u) ≤ d[u] ≤ d[y] = δ(s,y) ≤ δ(s,u), so all are equal.",
-          "When no finite frontier label remains, no unfinalized vertex can be reachable: a reachable path would have a first unfinalized vertex with a finite label."
+          "Induction hypothesis: every already-finalized vertex has its true shortest distance. After the source, let u be the next extracted vertex with finite minimum tentative distance. Choose a shortest path s→…→x→y→…→u, where y is its first unfinalized vertex and x immediately precedes y. We choose this path for the proof; the algorithm need not know it. x need not be the most recently extracted vertex, and y may be u.",
+          "The prefix ending at y is itself shortest: a shorter prefix would produce a shorter route to u. Since x is finalized, d[x]=δ(s,x), so the candidate through x is d[x]+w(x,y)=δ(s,y). Relaxation takes the minimum of the old estimate and this exact candidate. The old estimate is at least the true shortest distance (or infinity), so min(old d[y], δ(s,y)) = δ(s,y). Thus d[y]=δ(s,y), even though y is not finalized yet. This equality depends on our chosen shortest-path edge, not an arbitrary relaxation.",
+          "Because u is the minimum extraction, d[u] ≤ d[y] = δ(s,y). The remaining segment from y to u has nonnegative length, so δ(s,y) ≤ δ(s,u). Therefore d[u] ≤ δ(s,u). But d[u] is the length of a discovered route, so d[u] ≥ δ(s,u). These two bounds force d[u]=δ(s,u), preserving the invariant.",
+          "Termination: at most n extractions occur. When no finite frontier label remains, no unfinalized vertex can be reachable: a path to one would have a first unfinalized vertex whose edge from a finalized predecessor would give it a finite label. Thus all reachable vertices have correct finalized distances and all others retain infinity."
         ],
         "check": "Where exactly does a negative edge break the proof?",
         "answer": "The suffix inequality δ(s,y) ≤ δ(s,u) can fail. A path can reach y at a larger cost and then become cheaper through a negative suffix. Discovery and relaxation do not themselves finalize a distance."
