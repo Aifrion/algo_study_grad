@@ -25,7 +25,7 @@ export const examExercises = [
     "title": "Cover points with fixed-length intervals",
     "minutes": 25,
     "level": "Exam transfer",
-    "prompt": "Given n real points on a line and L>0, cover every point with as few closed intervals of length L as possible. Propose a greedy algorithm, prove it optimal by exchange or a lower bound, and analyze time. Return the intervals, not only their count.",
+    "prompt": "Given n real points on a line and L>0, cover every point with as few closed intervals of length L as possible. Propose a greedy algorithm, prove it optimal using a method you choose, and analyze time. Return the intervals, not only their count.",
     "hint": "Consider the leftmost uncovered point. How far right can an interval containing it end?",
     "outline": [
       "Sort points. At the leftmost uncovered x, choose [x,x+L], skip every point ≤x+L, and repeat.",
@@ -44,7 +44,7 @@ export const examExercises = [
     "topic": "greedy",
     "title": "Repair a stays-ahead argument",
     "minutes": 15,
-    "level": "Exam transfer",
+    "level": "Focused proof drill",
     "prompt": "For unweighted half-open interval scheduling, a student writes: “Greedy finishes its i-th event earlier, so it also finishes its next event earlier. Thus it is optimal.” Repair the missing induction step and explain why the finish-time comparison implies maximum cardinality.",
     "hint": "First prove that the other schedule’s next event can be chosen from the greedy state.",
     "outline": [
@@ -56,6 +56,11 @@ export const examExercises = [
       "State the quantified comparison schedule.",
       "Use feasibility before the greedy choice rule.",
       "Prove the stopping/cardinality implication."
+    ],
+    "requirements": [
+      "State the earliest-finish rule and a precise progress comparison against an arbitrary feasible schedule.",
+      "Prove the base case and inductive step, including why the comparison’s next event is available to greedy.",
+      "Explain why the comparison implies maximum cardinality and verify that greedy’s selections are feasible. This exercise focuses on the lemma, not a full implementation."
     ]
   },
   {
@@ -64,7 +69,7 @@ export const examExercises = [
     "title": "A route with a one-use coupon",
     "minutes": 30,
     "level": "Exam transfer",
-    "prompt": "A directed graph has n vertices, m edges, and nonnegative travel costs. You may use a coupon on at most one edge to make that edge free. Find a cheapest s–t route and indicate the coupon edge, if any. Define a reduction, prove both directions, and include output recovery in the running time.",
+    "prompt": "A directed graph has n vertices, m edges, and nonnegative travel costs. You may use a coupon on at most one edge to make that edge free. Find a cheapest s–t route and indicate the coupon edge, if any. Define a reduction, prove both directions, and include output recovery in the running time. The graph is given by adjacency lists; vertices may repeat in a route, and an empty route is permitted when s=t. Report no route if t cannot be reached.",
     "hint": "Remember whether the coupon has been used. Paying normally must remain an option.",
     "outline": [
       "Create states (v,0),(v,1). For every u→v of cost w, add same-layer edges of cost w and (u,0)→(v,1) of cost 0. Run Dijkstra from (s,0), accepting either target layer. Decode predecessor edges, preserving original edge IDs and coupon status.",
@@ -84,7 +89,7 @@ export const examExercises = [
     "title": "Even-length walks",
     "minutes": 25,
     "level": "Exam transfer",
-    "prompt": "Given a directed graph, return an s–t walk with an even number of edges, or report none. The empty walk is allowed when s=t. Vertices may repeat. Give a graph reduction, equivalence proof, and efficient implementation.",
+    "prompt": "Given a directed graph in adjacency-list format with n vertices and m edges, return an s–t walk with an even number of edges, or report none. The empty walk is allowed when s=t. Vertices may repeat. Give a graph reduction, equivalence proof, and efficient implementation.",
     "hint": "Track parity, rather than every possible length.",
     "outline": [
       "Use states (v,0),(v,1). Each original edge changes parity. Search from (s,0) to (t,0); decode a predecessor path.",
@@ -161,7 +166,7 @@ export const examExercises = [
     "topic": "amortized",
     "title": "Audit a union-find claim",
     "minutes": 20,
-    "level": "Exam transfer",
+    "level": "Focused proof drill",
     "prompt": "A student says: “Path compression makes every Find constant time, and rank is always the current tree height. Therefore Kruskal runs in O(m).” Identify and repair all three claims. Explain one rank invariant and how it is preserved.",
     "hint": "Separate one operation, a sequence of operations, and sorting.",
     "outline": [
@@ -200,7 +205,7 @@ export const examExercises = [
     "topic": "approximation",
     "title": "Repair a tour guarantee",
     "minutes": 20,
-    "level": "Exam transfer",
+    "level": "Focused proof drill",
     "prompt": "A proposed proof says: “An MST is shorter than an optimal TSP tour. Walk around the MST and skip repeated vertices, so the answer is optimal.” Under metric TSP assumptions, repair the proof and state the guarantee actually established. Identify the assumption used when skipping vertices.",
     "hint": "Count each tree edge traversal and write an inequality chain.",
     "outline": [
@@ -233,6 +238,67 @@ export const examExercises = [
       "Justify simultaneous overlap at the critical moment.",
       "Use max overlap, not summed overlaps.",
       "Preserve room IDs in the output."
+    ]
+  },
+  {
+    "id": "r3",
+    "topic": "reductions",
+    "title": "A cheapest sequence of upgrades",
+    "minutes": 30,
+    "level": "Independent transfer",
+    "prompt": "A device has n named configurations. Configuration v has an integer stage h(v). A list of m permitted upgrades gives a starting configuration u, a resulting configuration v, and a real cost c for each upgrade; every listed upgrade satisfies h(v)>h(u). Costs may be negative because of rebates. Given configurations s and t, return a minimum-total-cost sequence of upgrades from s to t or report that none exists. The empty sequence is allowed when s=t. Design an efficient algorithm and justify your choice of standard solver.",
+    "hint": "Which quantity changes strictly on every permitted move? What does that imply about cycles, even when costs are negative?",
+    "outline": [
+      "Create a directed vertex for each configuration and an edge for each permitted upgrade, preserving its cost and ID. Topologically sort the graph, initialize d[s]=0 and other distances to infinity, and relax outgoing edges in topological order. Recover upgrade IDs from predecessors, or report no sequence if d[t] is infinite.",
+      "Stage increases strictly on every edge, so a directed cycle is impossible. Original upgrade sequences and graph paths correspond in both directions with identical costs. DAG shortest paths is valid with negative weights because all predecessors are processed before a vertex. Its shortest path therefore decodes to a cheapest upgrade sequence.",
+      "O(n+m) construction, topological sorting, and relaxation; O(n) recovery. O(n+m) total time and space. Sorting the numerical stages is a valid but potentially slower alternative; linear-time graph topological sorting suffices."
+    ],
+    "rubric": [
+      "Define states and transitions, rather than only naming a solver.",
+      "Prove acyclicity and explain why negative costs are allowed.",
+      "Prove both maps and preserve total cost.",
+      "Return the sequence, handle unreachable t and s=t, and count all phases."
+    ]
+  },
+  {
+    "id": "r4",
+    "topic": "reductions",
+    "title": "The widest delivery route",
+    "minutes": 30,
+    "level": "Independent transfer",
+    "prompt": "A directed road network is given by adjacency lists with n vertices and m edges. Each edge e has a positive capacity c(e). For distinct depots s and t, find a route maximizing its bottleneck: the minimum edge capacity on the route. Return both the route and its bottleneck, or report no route. First give a test for whether a route of bottleneck at least B exists; then use that test to solve the optimization problem efficiently.",
+    "hint": "What edges can a route meeting threshold B use? How does feasibility change as B increases? Where can an optimal bottleneck value occur?",
+    "outline": [
+      "For a threshold B, retain edges with capacity at least B and run directed reachability from s. Sort distinct edge capacities and binary search for the largest feasible value. Run a final search with predecessor pointers to return its route. If there are no edges or no feasible value, report no route.",
+      "Every route with bottleneck at least B survives the filtering, and every route in the filtered graph meets that threshold. Feasibility is monotone: a route meeting a larger B also meets every smaller B. Any nonempty route has bottleneck equal to one of its edge capacities. Thus binary search over distinct capacities finds the optimum.",
+      "For m≥1, sorting takes O(m log(m+1)); O(log(m+1)) reachability tests take O((n+m) log(m+1)), plus O(n+m) recovery. Overall O((n+m) log(m+2)), including the empty-edge case. Space O(n+m). A separately justified widest-path algorithm is an alternative, but this exercise asks you to develop the threshold reduction."
+    ],
+    "rubric": [
+      "Do not confuse maximizing the minimum edge with minimizing the sum.",
+      "Prove both directions for the threshold test.",
+      "Justify monotonicity and the candidate values searched.",
+      "Count repeated searches, sorting, and recovery; do not claim one-search runtime for optimization."
+    ]
+  },
+  {
+    "id": "g5",
+    "topic": "greedy",
+    "title": "Reach the destination with fewest refills",
+    "minutes": 30,
+    "level": "Independent transfer",
+    "prompt": "A vehicle starts at position 0 with a full tank and must reach position D>0 along a straight road. A full tank permits travel distance L>0. There are n refilling stations at distinct positions strictly between 0 and D, given in arbitrary order. At any selected station, refilling restores a full tank; every refill counts as one stop. Travel is only toward D, and you may reach a station or D with an empty tank. Find a sequence of stations minimizing refill stops, or report that the trip is impossible. Design a greedy strategy and choose your own correctness proof method.",
+    "hint": "Compare the locations reached after the same number of refills. Is there a reason to stop when the destination is already within range?",
+    "outline": [
+      "Sort station positions. While D is farther than L from the current position, go to the farthest station within distance L, record a refill, and continue. If none is ahead within reach, report impossible. When D is within L, finish without an extra refill. Maintain a forward scan to avoid repeatedly searching all stations.",
+      "Each selected leg has length at most L. For stays-ahead, compare greedy location gᵢ after i refills with any feasible comparison location aᵢ: gᵢ≥aᵢ. Both start at 0. If aᵢ₊₁≤gᵢ, any next greedy refill advances beyond it. Otherwise aᵢ₊₁−gᵢ≤aᵢ₊₁−aᵢ≤L, so that comparison station is available and greedy chooses at least as far. If the comparison reaches D after k refills, greedy can finish by k because D−gₖ≤D−aₖ≤L, or greedy already finished. If greedy is stuck before D, no feasible trip can exist: any route reaching D must cross beyond the stuck position, and its first station/destination beyond it would have to be within L of that position.",
+      "O(n log n) sorting plus O(n) scanning and output, with O(n) storage for a simple sorted-copy implementation. If already sorted, O(n) time suffices. Handle n=0, D≤L, and gaps exactly L."
+    ],
+    "rubric": [
+      "Specify the sequence of station indices or positions and the minimum-stop objective.",
+      "Handle direct travel and exact-range endpoints without an unnecessary final refill.",
+      "State and prove a comparison or exchange lemma; availability needs justification.",
+      "Explain why the final comparison proves minimum stops and why failure means impossibility.",
+      "Count sorting and implement the scan without rescanning all stations per stop."
     ]
   }
 ];

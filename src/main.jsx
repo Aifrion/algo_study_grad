@@ -987,6 +987,7 @@ function Practice() {
           These are original exercises or adapted lecture/key examples, not a solution dump for the practice midterm. Suggested times are study targets, not official exam limits.
         </span>
       </div>
+      <div className="callout section-space"><h3>A suggested sequence for this review</h3><p>Start with a basic correspondence, then practice remembering state, selecting a solver, and designing a new greedy rule. P1 is the Dijkstra proof we already discussed.</p><div className="button-row">{["p2","r2","r1","r3","g2","g5"].map(id=><button key={id} className="button secondary small" onClick={()=>{setTopic("all");setSelected(id)}}>{id.toUpperCase()} · {exercises.find(x=>x.id===id).title}</button>)}</div><p>For a longer mixed session, try R4, P4, and G5. Work without hints first; suggested times are not official exam limits.</p></div>
       <div className="practice-layout">
         <aside className="card problem-list">
           <label>
@@ -1017,7 +1018,7 @@ function Practice() {
               key={x.id}
             >
               <span className="problem-number">
-                0{exercises.indexOf(x) + 1}
+                {String(exercises.indexOf(x) + 1).padStart(2, "0")}
               </span>
               <div>
                 <strong>{x.title}</strong>

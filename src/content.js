@@ -299,7 +299,7 @@ export const exercises = [
     level: "Core",
     minutes: 20,
     prompt:
-      "A directed graph G = (V,E) marks each vertex safe or unsafe. Given safe vertices s and t, find a route from s to t using only safe vertices, or report that none exists. Give a reduction to a standard graph algorithm, prove both directions of the correspondence, and analyze construction, solution, and decoding time.",
+      "A directed graph G = (V,E), supplied in adjacency-list format, marks each vertex safe or unsafe. Given safe vertices s and t, find a route from s to t using only safe vertices, or report that none exists. Give a reduction to a standard graph algorithm, prove both directions of the correspondence, and analyze construction, solution, and decoding time.",
     hint: "Decide precisely which vertices and edges are allowed in the new instance.",
     outline: [
       "Construct the subgraph induced by safe vertices, retaining an edge only if both endpoints are safe. Run BFS or DFS from s; use predecessor pointers to recover a path to t.",
@@ -324,7 +324,7 @@ export const exercises = [
     hint: "Name the first event of an optimal schedule. State exactly what is replaced, and show why every later event still fits.",
     outline: [
       "Use half-open intervals; touching endpoints do not conflict. Sort by finish time, then accept an interval when its start is at least the last accepted finish.",
-      "Replace the first optimal interval o by greedy g. Since f(g) ≤ f(o), all later events remain compatible. Cardinality is unchanged. Induct on the smaller compatible suffix, with the empty instance as the base case.",
+      "Replace the first optimal interval o by greedy g. Since f(g) ≤ f(o), all later events remain compatible. Cardinality is unchanged. The residual input is all original events starting at or after g finishes, not just the selected optimal suffix. That suffix must be optimal for the residual input, or improving it would improve the full optimum. Induct on this smaller input, with the empty instance as the base case.",
       "Sorting O(n log n), scan O(n), output O(n). If already sorted by finish, the algorithm takes O(n) time.",
     ],
     rubric: [

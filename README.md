@@ -30,7 +30,7 @@ The development server binds to all interfaces. Use the hosting platform's suppo
 - **Amortized analysis:** experiment with the lecture cash register potential, then run repeated finds on a union-by-rank tree with path compression.
 - Reorder proof steps, study runtime breakdowns, compare dense/sparse priority queue costs, and check conceptual understanding.
 - Eight detailed exam-prep chapters: answer structure, greedy, reductions, shortest paths, order notation, MST, amortized analysis, and approximation. Worked lemmas, recall reveals, weighted-job swap exploration, and load-balancing traces.
-- Seventeen free-response exercises with hidden hints, checklists, and reference outlines. Copy/download prompts for discussion in chat; no website answer fields or AI calls.
+- Twenty free-response exercises with hidden hints, checklists, and reference outlines. Copy/download prompts for discussion in chat; no website answer fields or AI calls.
 - Lecture library with source PDF page links, printable proof toolkit, and a suggested study plan.
 
 Progress persists in browser localStorage on the same origin/device. Existing drafts from the earlier practice editor are preserved and available under their corresponding exercises. No automatic proof grading, token usage, or cross-device sync is provided. Study progress records lab activity, proof ordering, and concept questions; it is not a mastery score.

@@ -37,6 +37,12 @@ Source precision: `ans1F26.pdf` is labeled a graded-problem answer key. `ans2ugF
 
 ## Practice and privacy
 
-The original five exercises plus twelve new/adapted exercises provide 17 prompts. Hint, self-review, and reference outline are independently hidden. Copy/download creates a prompt for discussion in chat; there are no AI API calls or answer-entry fields. Old localStorage drafts are not erased and can be read under the corresponding prompt. Suggested times are not official exam times.
+The original five exercises plus fifteen new/adapted exercises provide 20 prompts. Hint, self-review, and reference outline are independently hidden. Copy/download creates a prompt for discussion in chat; there are no AI API calls or answer-entry fields. Old localStorage drafts are not erased and can be read under the corresponding prompt. Suggested times are not official exam times.
 
 The supplied practice midterm informs a points/skills map without supplying its full solutions. Professor keys are used for source-identified worked examples. The student's HW3 submission is context, not an authority; it and the answer-key/midterm PDFs are not public assets. Graded homework solutions are not added to the site as a solution collection.
+
+## Practice requirements revision
+
+Prompts now display answer requirements aligned with the supplied practice midterm: specification, algorithm, main lemma/correspondence, implementation, and total time. Requirements are included in copied and downloaded prompts. Focused proof drills and pure order-notation questions have narrower requirements rather than an artificial algorithm template. These are study instructions, not official point allocations.
+
+Three original transfer exercises add acyclic upgrade sequences with negative costs (R3), bottleneck threshold optimization (R4), and minimum refills (G5). Reference outlines remain hidden. The recommended progression is P2 → R2 → R1 → R3 → G2 → G5. P3's outline now distinguishes the residual input from the selected optimal suffix.

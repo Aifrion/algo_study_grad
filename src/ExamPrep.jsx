@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { chapters } from './examContent';
+import { answerRequirements } from './practiceRequirements';
 
 export function ExamPrep({ id = 'start', go }) {
   const c = chapters.find(c => c.id === id) || chapters[0];
@@ -48,11 +49,13 @@ function LoadLab() {
 
 export function PracticeCard({ exercise: e }) {
   const [message,setMessage]=useState('');
-  const text=`Algorithm Studio exercise ${e.id}: ${e.title}\n\n${e.prompt}\n\nPlease discuss my attempt with me. Start with feedback or a small hint rather than revealing the entire solution.\n\nMy attempt:\n`;
+  const requirements=answerRequirements(e);
+  const text=`Algorithm Studio exercise ${e.id}: ${e.title}\n\n${e.prompt}\n\nInclude in your answer:\n${requirements.map((r,i)=>`${i+1}. ${r}`).join("\n")}\n\nPlease discuss my attempt with me. Start with feedback or a small hint rather than revealing the entire solution.\n\nMy attempt:\n`;
   async function copy(){try{await navigator.clipboard.writeText(text);setMessage('Prompt copied. Paste it into our chat with your attempt.')}catch{setMessage('Clipboard unavailable. Select the prompt below or download it.')}}
   function download(){const url=URL.createObjectURL(new Blob([text],{type:'text/plain'}));const a=document.createElement('a');a.href=url;a.download=`algorithm-studio-${e.id}.txt`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
   let oldDraft=null;try{oldDraft=JSON.parse(localStorage.getItem('as-draft-'+e.id));}catch{}
   return <section className="card practice-editor offline-practice"><span className="eyebrow">{e.id.toUpperCase()} · {e.level.toUpperCase()} · SUGGESTED {e.minutes} MIN</span><h2>{e.title}</h2><p className="exercise-prompt">{e.prompt}</p>
+    <section className="answer-requirements"><h3>Include in your answer</h3><p>Study guidance adapted from the professor’s homework and practice-midterm expectations; not an official grading rubric. Follow any narrower scope stated in this prompt.</p><ol>{requirements.map(r=><li key={r}>{r}</li>)}</ol></section>
     <div className="callout"><strong>Work on paper. Discuss it in chat.</strong><p>Bring the prompt ID and your reasoning here when you’re ready. This website has no AI calls, token usage, or automatic grading.</p></div>
     <div className="button-row"><button className="button" onClick={copy}>Copy prompt for chat</button><button className="button secondary" onClick={download}>Download prompt</button></div><p role="status">{message}</p>
     <details><summary>Show a small hint</summary><p>{e.hint}</p></details>

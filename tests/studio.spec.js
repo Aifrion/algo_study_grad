@@ -123,7 +123,10 @@ test("Paper-first practice hides solutions, exports prompts, and preserves old d
   await expect(page.locator("textarea")).toHaveCount(0);
   await page.getByRole("button", {name:"Copy prompt for chat"}).click();
   await expect(page.getByRole("status")).toContainText("Prompt copied");
-  expect(await page.evaluate(()=>navigator.clipboard.readText())).toContain("Algorithm Studio exercise p1");
+  const copied = await page.evaluate(()=>navigator.clipboard.readText());
+  expect(copied).toContain("Algorithm Studio exercise p1");
+  expect(copied).toContain("Include in your answer:");
+  expect(copied).toContain("extract-min");
   await expect(page.locator(".reference-outline")).not.toBeVisible();
   await page.getByText("Show a small hint", {exact:true}).click();
   await expect(page.getByText("Separate discovery", {exact:false})).toBeVisible();
@@ -235,4 +238,16 @@ test("Every page works at mobile width without horizontal overflow or console er
   await page.getByRole("link", { name: "Practice room" }).click();
   await expect(page.locator("h1")).toContainText("Turn understanding");
   expect(errors).toEqual([]);
+});
+
+ test("Transfer prompts expose requirements but keep solution choices hidden", async ({page}) => {
+  await page.goto("/#practice");
+  await page.getByRole("button", {name:"R3 · A cheapest sequence of upgrades", exact:true}).click();
+  await expect(page.locator(".answer-requirements")).toContainText("both directions");
+  await expect(page.locator(".reference-outline")).not.toBeVisible();
+  await page.getByText("Reveal reference outline after attempting", {exact:true}).click();
+  await expect(page.locator(".reference-outline")).toContainText("DAG shortest paths");
+  await page.getByRole("button", {name:"G5 · Reach the destination with fewest refills", exact:true}).click();
+  await expect(page.locator(".answer-requirements")).toContainText("residual input");
+  await expect(page.locator(".reference-outline")).not.toBeVisible();
 });
